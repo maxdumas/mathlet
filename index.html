@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+	<link rel="stylesheet" href="app.css">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.js"></script>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+</head>
+
+<body>
+	<div class="container">
+		<textarea id="text-input" rows="10"></textarea>
+		<div id="errors"></div>
+		<div id="contents"></div>
+	</div>
+
+	<script>
+	(function() {
+		var outputElem = document.getElementById('contents');
+		var inputElem = document.getElementById('text-input');
+		
+		var thread = null;
+		var updateContent = function(event) {
+			var markdownHtml = marked(inputElem.value);
+			console.log(markdownHtml);
+			var success = true;
+			var latexHtml = markdownHtml.replace(/\$[^\n]+?\$/gm, function(token) {
+				try {
+					token = token.trim();
+					console.log(token);
+					if(token[0] == '$') {
+						return katex.renderToString(token.substring(1, token.length - 1));
+					} else {
+						return '';
+					}
+				} catch(e) {
+					success = false;
+					errors.innerHTML = e.message;
+				}
+			});
+			if(success) {
+				errors.innerHTML = '';
+				outputElem.innerHTML = latexHtml;
+			}
+		};
+
+		inputElem.addEventListener('keyup', function(event) {
+			event.preventDefault();
+			clearTimeout(thread);
+			thread = setTimeout(updateContent, 300);
+		});
+		inputElem.addEventListener('change', function(event) {
+			event.preventDefault();
+			updateContent();
+		});
+		inputElem.addEventListener('paste', updateContent);
+	})();
+	</script>
+</body>
+</html>
