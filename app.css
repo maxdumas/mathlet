@@ -1,15 +1,54 @@
 body {
 	background-color: #282828;
-	color: #F8F8F2;
-	font-family: Helvetica, Arial, sans-serif;
+	color: #f8f8f2;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 18px;
 }
 
 .container {
 	width: 100%;
-	padding: 16px;
+}
+
+.left {
+	position: fixed;
+	top: 0;
+	left: 0;
+
+	width: 50%;
+	height: 100%;
+	box-sizing: border-box;
+	padding: 10px;
+	box-shadow: 2px 0 10px #222;
+
+	background-color: #444;
+}
+
+.right {
+	position: fixed;
+	top: 0;
+	left: 50%;
+
+	width: 50%;
+	box-sizing: border-box;
+	padding: 10px;
+}
+
+#contents {
+	overflow: scroll;
 }
 
 textarea {
+	box-sizing: border-box;
 	width: 100%;
+	height: 100%;
+	background-color: #444;
+	border: none;
+	resize: none;
+	color: #f8f8f2;
+	font-family: 'Consolas', monospace;
+	font-size: 16px;
 }
+
+textarea:focus {
+	border: none;
+	outline: none;
