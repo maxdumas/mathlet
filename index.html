@@ -3,10 +3,10 @@
 <head>
 	<title>Mathlet</title>
 
-	<link rel="stylesheet" href="app.css">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css">
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.css">
+	<link rel="stylesheet" href="app.css">
 	<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.js"></script>
-
 	<script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
 </head>
 
@@ -27,7 +27,8 @@
 
 		var outputElem = document.getElementById('contents');
 		var inputElem = document.getElementById('text-input');
-		
+
+		inputElem.value = localStorage['mathlet.session.data'] || '';
 		var updateContent = function(event) {
 			var success = true;
 			var latexTokens = [];
@@ -50,8 +51,12 @@
 			if(success) {
 				errors.innerHTML = '';
 				outputElem.innerHTML = latexHtml;
+				document.body.scrollTop = document.body.scrollHeight;
+				localStorage['mathlet.session.data'] = inputElem.value;
 			}
 		};
+
+		updateContent();
 
 		inputElem.addEventListener('keyup', function(event) {
 			event.preventDefault();
