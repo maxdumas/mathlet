@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
 <head>
+	<title>Mathlet</title>
+
 	<link rel="stylesheet" href="app.css">
 	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.css">
 	<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.1.1/katex.min.js"></script>
@@ -29,17 +31,22 @@
 		var updateContent = function(event) {
 			var success = true;
 			var latexTokens = [];
-			var tokenizedHtml = inputElem.value.replace(/\$[^\n]+?\$/gm, function(token) {
-				latexTokens.push(token);
-				return '$' + latexTokens.length + '$';
-			});
 
-			var markdownHtml = marked(tokenizedHtml);
-			var latexHtml = markdownHtml.replace(/\$\d+\$/gm, function(token) {
-				var i = parseInt(token.substring(1, token.length - 1)) - 1;
-				return katex.renderToString(latexTokens[i].substring(1, latexTokens[i].length - 1));
-			});
+			try {
+				var tokenizedHtml = inputElem.value.replace(/\$[^\n]+?\$/gm, function(token) {
+					latexTokens.push(token);
+					return '$' + latexTokens.length + '$';
+				});
 
+				var markdownHtml = marked(tokenizedHtml);
+				var latexHtml = markdownHtml.replace(/\$\d+\$/gm, function(token) {
+					var i = parseInt(token.substring(1, token.length - 1)) - 1;
+					return katex.renderToString(latexTokens[i].substring(1, latexTokens[i].length - 1));
+				});
+			} catch(e) {
+				errors.innerHTML = e.message;
+				success = false;
+			}
 			if(success) {
 				errors.innerHTML = '';
 				outputElem.innerHTML = latexHtml;

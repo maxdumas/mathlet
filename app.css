@@ -22,12 +22,11 @@ body {
 	box-shadow: 2px 0 10px #222;
 
 	background-color: #444;
+	font-family: 'Consolas', monospace;
 }
 
 .right {
-	position: fixed;
-	top: 0;
-	left: 50%;
+	margin-left: 50%;
 
 	width: 50%;
 	box-sizing: border-box;
@@ -35,13 +34,27 @@ body {
 }
 
 #contents {
-	overflow: scroll;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	word-wrap: default;
+}
+
+#contents pre {
+	overflow-x: scroll;
+}
+
+#errors {
+	border-top: 1px solid #555;
+	padding-top: 4px;
+
+	color: #F92672;
+	font-size: 12px;
 }
 
 textarea {
 	box-sizing: border-box;
 	width: 100%;
-	height: 100%;
+	height: 90%;
 	background-color: #444;
 	border: none;
 	resize: none;
