@@ -21,28 +21,25 @@
 
 	<script>
 	(function() {
+		marked.setOptions({ gfm: true });
+
 		var outputElem = document.getElementById('contents');
 		var inputElem = document.getElementById('text-input');
 		
-		var thread = null;
 		var updateContent = function(event) {
-			var markdownHtml = marked(inputElem.value);
-			console.log(markdownHtml);
 			var success = true;
-			var latexHtml = markdownHtml.replace(/\$[^\n]+?\$/gm, function(token) {
-				try {
-					token = token.trim();
-					console.log(token);
-					if(token[0] == '$') {
-						return katex.renderToString(token.substring(1, token.length - 1));
-					} else {
-						return '';
-					}
-				} catch(e) {
-					success = false;
-					errors.innerHTML = e.message;
-				}
+			var latexTokens = [];
+			var tokenizedHtml = inputElem.value.replace(/\$[^\n]+?\$/gm, function(token) {
+				latexTokens.push(token);
+				return '$' + latexTokens.length + '$';
 			});
+
+			var markdownHtml = marked(tokenizedHtml);
+			var latexHtml = markdownHtml.replace(/\$\d+\$/gm, function(token) {
+				var i = parseInt(token.substring(1, token.length - 1)) - 1;
+				return katex.renderToString(latexTokens[i].substring(1, latexTokens[i].length - 1));
+			});
+
 			if(success) {
 				errors.innerHTML = '';
 				outputElem.innerHTML = latexHtml;
@@ -51,6 +48,7 @@
 
 		inputElem.addEventListener('keyup', function(event) {
 			event.preventDefault();
+			var thread = null;
 			clearTimeout(thread);
 			thread = setTimeout(updateContent, 300);
 		});
