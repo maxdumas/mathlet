@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+	<title>Mathlet</title>
+
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.2/normalize.min.css">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.2.0/katex.min.css">
+	<link rel="stylesheet" href="app.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/KaTeX/0.2.0/katex.min.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+</head>
+
+<body>
+	<div class="container">
+		<div class="left">
+			<textarea id="text-input" rows="10"></textarea>
+			<div id="errors"></div>
+		</div>
+		<div class="right">
+			<div id="contents"></div>
+		</div>
+	</div>
+
+	<script>
+	(function() {
+		marked.setOptions({ gfm: true });
+
+		var outputElem = document.getElementById('contents');
+		var inputElem = document.getElementById('text-input');
+
+		inputElem.value = localStorage['mathlet.session.data'] || '';
+		var updateContent = function(event) {
+			var success = true;
+			var latexTokens = [];
+			var latexHtml = '';
+			try {
+				var tokenizedHtml = inputElem.value.replace(/\$[^\n]+?\$/gm, function(token) {
+					latexTokens.push(token);
+					return '$' + latexTokens.length + '$';
+				});
+
+				var markdownHtml = marked(tokenizedHtml);
+				latexHtml = markdownHtml.replace(/\$\d+\$/gm, function(token) {
+					console.log(token);
+					var i = parseInt(token.substring(1, token.length - 1)) - 1;
+					var latex = latexTokens[i];
+					
+					var head = 1;
+					var displayMode = false;
+					var prefix = '';
+					if(latex[1] === ':') {
+						head = 2;
+						displayMode = true;
+					} else if(latex[1] === '_') {
+						head = 2;
+						prefix = '\\displaystyle ';
+					}
+					return katex.renderToString(prefix + latexTokens[i].substring(head, latexTokens[i].length - 1), { displayMode: displayMode });
+				});
+			} catch(e) {
+				errors.innerHTML = e.message;
+				success = false;
+			}
+			if(success) {
+				errors.innerHTML = '';
+				outputElem.innerHTML = latexHtml;
+				document.body.scrollTop = document.body.scrollHeight;
+				localStorage['mathlet.session.data'] = inputElem.value;
+			}
+		};
+
+		updateContent();
+
+		inputElem.addEventListener('keyup', function(event) {
+			event.preventDefault();
+			var thread = null;
+			clearTimeout(thread);
+			thread = setTimeout(updateContent, 300);
+		});
+		inputElem.addEventListener('change', function(event) {
+			event.preventDefault();
+			updateContent();
+		});
+		inputElem.addEventListener('paste', updateContent);
+	})();
+	</script>
+</body>
+</html>

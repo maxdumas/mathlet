@@ -1,0 +1,25 @@
+{
+  "name": "mathlet",
+  "version": "0.0.1",
+  "description": "A web-based Markdown + LaTeX editor",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maxdumas/mathlet.git"
+  },
+  "author": "maxdumas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maxdumas/mathlet/issues"
+  },
+  "homepage": "https://github.com/maxdumas/mathlet",
+  "dependencies": {
+    "express": "^4.12.3",
+    "googleapis": "^2.0.2",
+    "readline": "0.0.7"
+  }
+}
